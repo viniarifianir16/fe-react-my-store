@@ -1,6 +1,46 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useRef } from 'react';
+import Swal from 'sweetalert2';
+import { useNavigate } from 'react-router-dom';
+import api, { getCsrfToken } from '../../api/axios';
+import { useAuthStore } from '../../stores/Auth';
+
 const SignIn: React.FC = () => {
+  const emailRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
+  const { setUser } = useAuthStore();
+  const navigate = useNavigate();
+
+  const submitLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const email = emailRef.current?.value;
+    const password = passwordRef.current?.value;
+
+    if (!email || !password) {
+      Swal.fire('Error', 'Email and password are required', 'error');
+      return;
+    }
+
+    try {
+      await getCsrfToken();
+      await api.post('/login', { email, password });
+
+      const userRes = await api.get('/api/user');
+      setUser(userRes.data);
+
+      Swal.fire('Success!', 'Login succesfully', 'success');
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('Login Error:', error);
+      Swal.fire(
+        'Error',
+        (error as any).response?.data?.message || 'Invalid email or password',
+        'error',
+      );
+    }
+  };
+
   return (
     <>
       <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark sm:w-1/2 m-auto">
@@ -12,7 +52,7 @@ const SignIn: React.FC = () => {
                 Sign In to My Store
               </h2>
 
-              <form>
+              <form onSubmit={submitLogin}>
                 <div className="mb-4">
                   <label className="mb-2.5 block font-medium text-black dark:text-white">
                     Email
@@ -20,6 +60,7 @@ const SignIn: React.FC = () => {
                   <div className="relative">
                     <input
                       type="email"
+                      ref={emailRef}
                       placeholder="Enter your email"
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                     />
@@ -46,12 +87,13 @@ const SignIn: React.FC = () => {
 
                 <div className="mb-6">
                   <label className="mb-2.5 block font-medium text-black dark:text-white">
-                    Re-type Password
+                    Password
                   </label>
                   <div className="relative">
                     <input
                       type="password"
-                      placeholder="6+ Characters, 1 Capital letter"
+                      ref={passwordRef}
+                      placeholder="Enter your password"
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                     />
 

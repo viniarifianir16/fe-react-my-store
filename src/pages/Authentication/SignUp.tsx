@@ -1,7 +1,51 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useRef } from 'react';
+import Swal from 'sweetalert2';
+import axios from 'axios';
+import { baseUrl } from '../../utils/Constants';
+import { useNavigate } from 'react-router-dom';
+import api, { getCsrfToken } from '../../api/axios';
 
 const SignUp: React.FC = () => {
+  const nameRef = useRef<HTMLInputElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
+  const passwordConfirmRef = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
+
+  const submitRegister = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const name = nameRef.current?.value;
+    const email = emailRef.current?.value;
+    const password = passwordRef.current?.value;
+    const password_confirmation = passwordConfirmRef.current?.value;
+
+    try {
+      await getCsrfToken();
+      await api.post(`${baseUrl}/register`, {
+        name,
+        email,
+        password,
+        password_confirmation,
+      });
+
+      Swal.fire(
+        'Success!',
+        'Register Success, you can login with this email',
+        'success',
+      );
+      navigate('/');
+    } catch (error) {
+      Swal.fire(
+        'Error',
+        (error as any).response?.data?.message ||
+          'An error occurred. Please try again.',
+        'error',
+      );
+    }
+  };
+
   return (
     <>
       <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark sm:w-1/2 m-auto">
@@ -13,7 +57,7 @@ const SignUp: React.FC = () => {
                 Sign Up to My Store
               </h2>
 
-              <form>
+              <form onSubmit={submitRegister}>
                 <div className="mb-4">
                   <label className="mb-2.5 block font-medium text-black dark:text-white">
                     Name
@@ -21,6 +65,8 @@ const SignUp: React.FC = () => {
                   <div className="relative">
                     <input
                       type="text"
+                      name="name"
+                      ref={nameRef}
                       placeholder="Enter your full name"
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                     />
@@ -56,6 +102,8 @@ const SignUp: React.FC = () => {
                   <div className="relative">
                     <input
                       type="email"
+                      name="email"
+                      ref={emailRef}
                       placeholder="Enter your email"
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                     />
@@ -87,7 +135,9 @@ const SignUp: React.FC = () => {
                   <div className="relative">
                     <input
                       type="password"
-                      placeholder="Enter your password"
+                      name="password"
+                      ref={passwordRef}
+                      placeholder="6+ Characters, 1 Capital letter"
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                     />
 
@@ -122,6 +172,8 @@ const SignUp: React.FC = () => {
                   <div className="relative">
                     <input
                       type="password"
+                      name="password_confirmation"
+                      ref={passwordConfirmRef}
                       placeholder="Re-enter your password"
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                     />
@@ -161,7 +213,7 @@ const SignUp: React.FC = () => {
                 <div className="mt-6 text-center">
                   <p>
                     Already have an account?{' '}
-                    <Link to="/auth/signin" className="text-primary">
+                    <Link to="/" className="text-primary">
                       Sign in
                     </Link>
                   </p>

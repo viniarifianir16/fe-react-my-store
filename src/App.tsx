@@ -16,6 +16,9 @@ import Tables from './pages/Tables';
 import Alerts from './pages/UiElements/Alerts';
 import Buttons from './pages/UiElements/Buttons';
 import DefaultLayout from './layout/DefaultLayout';
+import Barang from './pages/Barang/Barang';
+import BarangForm from './pages/Barang/BarangForm';
+import AuthGuard from './pages/AuthGuard';
 
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -57,8 +60,66 @@ function App() {
           path="/dashboard"
           element={
             <>
-              <PageTitle title="Dashboard | My Store" />
-              <ECommerce />
+              <AuthGuard>
+                <PageTitle title="Dashboard | My Store" />
+                <ECommerce />
+              </AuthGuard>
+            </>
+          }
+        />
+
+        <Route
+          path="/data/barang"
+          element={
+            <>
+              <AuthGuard>
+                <PageTitle title="Barang | My Store" />
+                <Barang barang={[]} />
+              </AuthGuard>
+            </>
+          }
+        />
+        <Route
+          path="/data/barang-form"
+          element={
+            <>
+              <AuthGuard>
+                <PageTitle title="Barang | My Store" />
+                <BarangForm />
+              </AuthGuard>
+            </>
+          }
+        />
+        <Route
+          path="/data/barang-form/:id"
+          element={
+            <>
+              <AuthGuard>
+                <PageTitle title="Barang | My Store" />
+                <BarangForm />
+              </AuthGuard>
+            </>
+          }
+        />
+        <Route
+          path="/data/customer"
+          element={
+            <>
+              <AuthGuard>
+                <PageTitle title="Customer | My Store" />
+                <Calendar />
+              </AuthGuard>
+            </>
+          }
+        />
+        <Route
+          path="/data/sales"
+          element={
+            <>
+              <AuthGuard>
+                <PageTitle title="Sales | My Store" />
+                <Calendar />
+              </AuthGuard>
             </>
           }
         />

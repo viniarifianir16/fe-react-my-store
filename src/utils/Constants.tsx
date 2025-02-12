@@ -1,1 +1,2 @@
-export const baseUrl = process.env.VITE_APP_HOST;
+/// <reference types="vite/client" />
+export const baseUrl = import.meta.env.VITE_APP_HOST;
