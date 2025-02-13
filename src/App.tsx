@@ -19,6 +19,11 @@ import DefaultLayout from './layout/DefaultLayout';
 import Barang from './pages/Barang/Barang';
 import BarangForm from './pages/Barang/BarangForm';
 import AuthGuard from './pages/AuthGuard';
+import Customer from './pages/Customer/Customer';
+import CustomerForm from './pages/Customer/CustomerForm';
+import Sales from './pages/Sales/Sales';
+import Transaksi from './pages/Transaksi/Transaksi';
+import Laporan from './pages/Laporan/Laporan';
 
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -101,107 +106,125 @@ function App() {
             </>
           }
         />
+
         <Route
           path="/data/customer"
           element={
             <>
               <AuthGuard>
                 <PageTitle title="Customer | My Store" />
-                <Calendar />
+                <Customer customer={[]} />
               </AuthGuard>
             </>
           }
         />
         <Route
-          path="/data/sales"
+          path="/data/customer-form"
           element={
             <>
               <AuthGuard>
-                <PageTitle title="Sales | My Store" />
-                <Calendar />
+                <PageTitle title="Customer | My Store" />
+                <CustomerForm />
+              </AuthGuard>
+            </>
+          }
+        />
+        <Route
+          path="/data/customer-form/:id"
+          element={
+            <>
+              <AuthGuard>
+                <PageTitle title="Customer | My Store" />
+                <CustomerForm />
               </AuthGuard>
             </>
           }
         />
 
         <Route
-          path="/calendar"
+          path="/data/sales"
           element={
             <>
-              <PageTitle title="Calendar | My Store" />
-              <Calendar />
+              <AuthGuard>
+                <PageTitle title="Sales | My Store" />
+                <Sales sales={[]} />
+              </AuthGuard>
             </>
           }
         />
         <Route
-          path="/profile"
+          path="/data/customer-form"
           element={
             <>
-              <PageTitle title="Profile | My Store" />
-              <Profile />
+              <AuthGuard>
+                <PageTitle title="Customer | My Store" />
+                <CustomerForm />
+              </AuthGuard>
             </>
           }
         />
         <Route
-          path="/forms/form-elements"
+          path="/data/customer-form/:id"
           element={
             <>
-              <PageTitle title="Form Elements | My Store" />
-              <FormElements />
+              <AuthGuard>
+                <PageTitle title="Customer | My Store" />
+                <CustomerForm />
+              </AuthGuard>
+            </>
+          }
+        />
+
+        <Route
+          path="/transaksi"
+          element={
+            <>
+              <AuthGuard>
+                <PageTitle title="Transaksi | My Store" />
+                <Transaksi transaksi={[]} />
+              </AuthGuard>
             </>
           }
         />
         <Route
-          path="/forms/form-layout"
+          path="/transasksi-form"
           element={
             <>
-              <PageTitle title="Form Layout | My Store" />
-              <FormLayout />
+              <AuthGuard>
+                <PageTitle title="Transaksi | My Store" />
+                <CustomerForm />
+              </AuthGuard>
             </>
           }
         />
         <Route
-          path="/tables"
+          path="/transaksi-form/:id"
           element={
             <>
-              <PageTitle title="Tables | My Store" />
-              <Tables />
+              <AuthGuard>
+                <PageTitle title="Transaksi | My Store" />
+                <CustomerForm />
+              </AuthGuard>
             </>
           }
         />
+
+        <Route
+          path="/laporan"
+          element={
+            <>
+              <PageTitle title="Laporan | My Store" />
+              <Laporan sales={[]} />
+            </>
+          }
+        />
+
         <Route
           path="/settings"
           element={
             <>
               <PageTitle title="Settings | My Store" />
               <Settings />
-            </>
-          }
-        />
-        <Route
-          path="/chart"
-          element={
-            <>
-              <PageTitle title="Basic Chart | My Store" />
-              <Chart />
-            </>
-          }
-        />
-        <Route
-          path="/ui/alerts"
-          element={
-            <>
-              <PageTitle title="Alerts | My Store" />
-              <Alerts />
-            </>
-          }
-        />
-        <Route
-          path="/ui/buttons"
-          element={
-            <>
-              <PageTitle title="Buttons | My Store" />
-              <Buttons />
             </>
           }
         />

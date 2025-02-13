@@ -6,15 +6,19 @@ import Swal from 'sweetalert2';
 import { Link } from 'react-router-dom';
 import api, { getCsrfToken } from '../../api/axios';
 
-interface Barang {
+interface Sales {
   id: string | number;
   kode: string;
-  nama: string;
-  harga: string | number;
+  tgl: string;
+  cust_id: string | number;
+  subtotal: string | number;
+  diskon: string | number;
+  ongkir: string | number;
+  total_bayar: string | number;
 }
 
-const Barang = ({ barang }: { barang: Barang[] }) => {
-  const [data, setData] = useState<Barang[]>(barang || []);
+const Sales = ({ sales }: { sales: Sales[] }) => {
+  const [data, setData] = useState<Sales[]>(sales || []);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
@@ -26,7 +30,7 @@ const Barang = ({ barang }: { barang: Barang[] }) => {
   const fetchData = async () => {
     try {
       const token = await getCsrfToken();
-      const response = await api.get(`/api/barang`, {
+      const response = await api.get(`/api/sales`, {
         headers: {
           'X-XSRF-TOKEN': token,
         },
@@ -51,17 +55,17 @@ const Barang = ({ barang }: { barang: Barang[] }) => {
     if (result.isConfirmed) {
       try {
         const token = await getCsrfToken();
-        await api.delete(`/api/barang/${id}`, {
+        await api.delete(`/api/sales/${id}`, {
           headers: {
             'X-XSRF-TOKEN': token,
           },
         });
         setData(data.filter((item) => item.id !== id));
-        Swal.fire('Deleted!', 'Barang has been deleted.', 'success');
+        Swal.fire('Deleted!', 'Sales has been deleted.', 'success');
       } catch (error) {
         Swal.fire(
           'Error',
-          (error as any).response?.data?.message || 'Failed to delete barang',
+          (error as any).response?.data?.message || 'Failed to delete sales',
           'error',
         );
       }
@@ -89,20 +93,20 @@ const Barang = ({ barang }: { barang: Barang[] }) => {
 
   return (
     <>
-      <Breadcrumb pageName="Barang" />
+      <Breadcrumb pageName="Sales" />
 
       <div className="flex flex-col gap-10">
         <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
           <div className="flex items-center justify-between">
             <h4 className="text-xl font-semibold text-black dark:text-white">
-              Data Barang
+              Data Penjualan
             </h4>
             <Link
-              to="/data/barang-form"
+              to="/data/sales-form"
               className="inline-flex items-center gap-2.5 rounded-md bg-primary py-2 px-4 text-center font-medium text-white hover:bg-opacity-90"
             >
               <IoIosAdd />
-              Tambah Barang
+              Tambah Penjualan
             </Link>
           </div>
 
@@ -110,7 +114,7 @@ const Barang = ({ barang }: { barang: Barang[] }) => {
           <div className="my-4">
             <input
               type="text"
-              placeholder="Cari Barang..."
+              placeholder="Cari Penjualan..."
               value={searchTerm}
               onChange={handleSearch}
               className="w-full rounded-md border border-gray-300 p-2 text-sm focus:border-blue-500 focus:outline-none dark:border-strokedark dark:bg-boxdark dark:text-white"
@@ -126,13 +130,19 @@ const Barang = ({ barang }: { barang: Barang[] }) => {
                     No
                   </th>
                   <th className="min-w-[100px] py-4 px-4 font-medium text-black dark:text-white">
-                    Kode
+                    Tanggal
                   </th>
-                  <th className="min-w-[200px] py-4 px-4 font-medium text-black dark:text-white">
+                  <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
                     Nama
                   </th>
                   <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
-                    Harga
+                    Subtotal
+                  </th>
+                  <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
+                    Diskon
+                  </th>
+                  <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
+                    Ongkir
                   </th>
                   <th className="min-w-[100] py-4 px-4 font-medium text-black dark:text-white">
                     Aksi
@@ -149,17 +159,37 @@ const Barang = ({ barang }: { barang: Barang[] }) => {
                       <p className="text-black dark:text-white">{item.kode}</p>
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                      <p className="text-black dark:text-white">{item.nama}</p>
+                      <p className="text-black dark:text-white">{item.tgl}</p>
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                       <p className="text-black dark:text-white">
-                        {item.harga.toLocaleString()}
+                        {item.cust_id}
+                      </p>
+                    </td>
+                    <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                      <p className="text-black dark:text-white">
+                        {item.subtotal}
+                      </p>
+                    </td>
+                    <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                      <p className="text-black dark:text-white">
+                        {item.diskon}
+                      </p>
+                    </td>
+                    <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                      <p className="text-black dark:text-white">
+                        {item.ongkir}
+                      </p>
+                    </td>
+                    <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                      <p className="text-black dark:text-white">
+                        {item.total_bayar}
                       </p>
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                       <div className="flex items-center space-x-3.5">
                         <Link
-                          to={`/data/barang-form/${item.id}`}
+                          to={`/data/sales-form/${item.id}`}
                           className="hover:text-primary"
                         >
                           <FaRegEdit />
@@ -206,4 +236,4 @@ const Barang = ({ barang }: { barang: Barang[] }) => {
   );
 };
 
-export default Barang;
+export default Sales;

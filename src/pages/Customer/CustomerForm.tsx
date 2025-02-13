@@ -4,23 +4,23 @@ import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import Swal from 'sweetalert2';
 import api, { getCsrfToken } from '../../api/axios';
 
-const BarangForm = () => {
+const CustomerForm = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [kode, setKode] = useState('');
-  const [nama, setNama] = useState('');
-  const [harga, setHarga] = useState('');
+  const [name, setNama] = useState('');
+  const [telp, setTelp] = useState('');
   const [isUpdateMode, setIsUpdateMode] = useState(false);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (id) {
       setIsUpdateMode(true);
-      fetchDataBarang(id);
+      fetchDataCustomer(id);
     }
   }, [id]);
 
-  const fetchDataBarang = async (barangID: string) => {
+  const fetchDataCustomer = async (customerID: string) => {
     try {
       const token = await getCsrfToken();
       await api.get(`/sanctum/csrf-cookie`, {
@@ -29,19 +29,20 @@ const BarangForm = () => {
         },
       });
 
-      const response = await api.get(`/api/barang/${barangID}`, {
+      const response = await api.get(`/api/customer/${customerID}`, {
         headers: {
           'X-XSRF-TOKEN': token,
         },
       });
-      const barangeData = response.data;
-      setKode(barangeData.kode);
-      setNama(barangeData.nama);
-      setHarga(barangeData.harga);
+      const customereData = response.data;
+      setKode(customereData.kode);
+      setNama(customereData.name);
+      setTelp(customereData.telp);
     } catch (error) {
       Swal.fire(
         'Error',
-        (error as any).response?.data?.message || 'Failed to fetch barang data',
+        (error as any).response?.data?.message ||
+          'Failed to fetch customer data',
         'error',
       );
     }
@@ -54,11 +55,11 @@ const BarangForm = () => {
       setLoading(true);
       const token = await getCsrfToken();
       await api.post(
-        `/api/barang`,
+        `/api/customer`,
         {
           kode,
-          nama,
-          harga,
+          name,
+          telp,
         },
         {
           headers: {
@@ -66,8 +67,8 @@ const BarangForm = () => {
           },
         },
       );
-      Swal.fire('Success!', 'Barang created successfully', 'success');
-      navigate('/data/barang');
+      Swal.fire('Success!', 'Customer created successfully', 'success');
+      navigate('/data/customer');
     } catch (error) {
       setLoading(false);
       Swal.fire(
@@ -85,11 +86,11 @@ const BarangForm = () => {
       setLoading(true);
       const token = await getCsrfToken();
       await api.put(
-        `/api/barang/${id}`,
+        `/api/customer/${id}`,
         {
           kode,
-          nama,
-          harga,
+          name,
+          telp,
         },
         {
           headers: {
@@ -97,8 +98,8 @@ const BarangForm = () => {
           },
         },
       );
-      Swal.fire('Success!', 'Barang updated successfully', 'success');
-      navigate('/data/barang');
+      Swal.fire('Success!', 'Customer updated successfully', 'success');
+      navigate('/data/customer');
     } catch (error) {
       setLoading(false);
       Swal.fire(
@@ -112,15 +113,15 @@ const BarangForm = () => {
 
   return (
     <>
-      <Breadcrumb pageName="Barang" />
+      <Breadcrumb pageName="Customer" />
 
       <div>
         <div className="flex flex-col gap-9">
-          {/* <!-- Barang Form --> */}
+          {/* <!-- Customer Form --> */}
           <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
             <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
               <h3 className="font-medium text-black dark:text-white">
-                {isUpdateMode ? 'Edit Barang' : 'Tambah Barang'}
+                {isUpdateMode ? 'Edit Customer' : 'Tambah Customer'}
               </h3>
             </div>
             <form onSubmit={isUpdateMode ? handleUpdate : handleSubmit}>
@@ -134,7 +135,7 @@ const BarangForm = () => {
                     id="kode"
                     value={kode}
                     onChange={(e) => setKode(e.target.value)}
-                    placeholder="Masukkan kode barang"
+                    placeholder="Masukkan kode customer"
                     className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                     required
                   />
@@ -146,10 +147,10 @@ const BarangForm = () => {
                   </label>
                   <input
                     type="text"
-                    id="nama"
-                    value={nama}
+                    id="name"
+                    value={name}
                     onChange={(e) => setNama(e.target.value)}
-                    placeholder="Masukkan nama barang"
+                    placeholder="Masukkan nama customer"
                     className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                     required
                   />
@@ -157,14 +158,14 @@ const BarangForm = () => {
 
                 <div className="mb-4.5">
                   <label className="mb-2.5 block text-black dark:text-white">
-                    Harga
+                    Telepon
                   </label>
                   <input
                     type="number"
-                    id="harga"
-                    value={harga.toLocaleString()}
-                    onChange={(e) => setHarga(e.target.value)}
-                    placeholder="Masukkan nama barang"
+                    id="telp"
+                    value={telp}
+                    onChange={(e) => setTelp(e.target.value)}
+                    placeholder="Masukkan nomor telepon"
                     className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                     required
                   />
@@ -177,7 +178,7 @@ const BarangForm = () => {
                   value={loading ? 'Loading...' : ''}
                   disabled={loading}
                 >
-                  {isUpdateMode ? 'Ubah Barang' : 'Simpan Barang'}
+                  {isUpdateMode ? 'Ubah Customer' : 'Simpan Customer'}
                 </button>
               </div>
             </form>
@@ -188,4 +189,4 @@ const BarangForm = () => {
   );
 };
 
-export default BarangForm;
+export default CustomerForm;

@@ -1,9 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import Swal from 'sweetalert2';
-import axios from 'axios';
-import { baseUrl } from '../../utils/Constants';
 import { useNavigate } from 'react-router-dom';
 import api, { getCsrfToken } from '../../api/axios';
 
@@ -13,6 +11,7 @@ const SignUp: React.FC = () => {
   const passwordRef = useRef<HTMLInputElement>(null);
   const passwordConfirmRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const submitRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -22,13 +21,22 @@ const SignUp: React.FC = () => {
     const password_confirmation = passwordConfirmRef.current?.value;
 
     try {
-      await getCsrfToken();
-      await api.post(`${baseUrl}/register`, {
-        name,
-        email,
-        password,
-        password_confirmation,
-      });
+      setLoading(true);
+      const token = await getCsrfToken();
+      await api.post(
+        `/register`,
+        {
+          name,
+          email,
+          password,
+          password_confirmation,
+        },
+        {
+          headers: {
+            'X-XSRF-TOKEN': token,
+          },
+        },
+      );
 
       Swal.fire(
         'Success!',
@@ -37,6 +45,7 @@ const SignUp: React.FC = () => {
       );
       navigate('/');
     } catch (error) {
+      setLoading(false);
       Swal.fire(
         'Error',
         (error as any).response?.data?.message ||
@@ -205,8 +214,11 @@ const SignUp: React.FC = () => {
                 <div className="mb-5">
                   <input
                     type="submit"
-                    value="Create account"
-                    className="w-full cursor-pointer rounded-lg border border-primary bg-primary p-4 text-white transition hover:bg-opacity-90"
+                    value={loading ? 'Creating account...' : 'Create account'}
+                    className={`w-full cursor-pointer rounded-lg border border-primary bg-primary p-4 text-white transition hover:bg-opacity-90 ${
+                      loading ? 'opacity-50 cursor-not-allowed' : ''
+                    }`}
+                    disabled={loading}
                   />
                 </div>
 

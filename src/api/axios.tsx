@@ -7,17 +7,23 @@ const api = axios.create({
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
-    'X-XSRF-TOKEN': decodeURIComponent(
-      document.cookie
-        .split('; ')
-        .find((row) => row.startsWith('XSRF-TOKEN='))
-        ?.split('=')[1] || '',
-    ),
   },
 });
 
 export const getCsrfToken = async () => {
   await api.get('/sanctum/csrf-cookie');
+
+  const csrfToken = document.cookie
+    .split('; ')
+    .find((row) => row.startsWith('XSRF-TOKEN='))
+    ?.split('=')[1];
+
+  if (!csrfToken) {
+    console.error('CSRF token not found in cookies.');
+    return null;
+  }
+
+  return decodeURIComponent(csrfToken);
 };
 
 export default api;

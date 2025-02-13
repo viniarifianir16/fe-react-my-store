@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import api, { getCsrfToken } from '../../api/axios';
@@ -11,6 +11,7 @@ const SignIn: React.FC = () => {
   const passwordRef = useRef<HTMLInputElement>(null);
   const { setUser } = useAuthStore();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const submitLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -23,16 +24,33 @@ const SignIn: React.FC = () => {
     }
 
     try {
-      await getCsrfToken();
-      await api.post('/login', { email, password });
+      setLoading(true);
+      const token = await getCsrfToken();
+      const loginResponse = await api.post(
+        `/login`,
+        { email, password },
+        {
+          headers: {
+            'X-XSRF-TOKEN': token,
+          },
+        },
+      );
+      console.log('Login Response:', loginResponse);
 
-      const userRes = await api.get('/api/user');
-      setUser(userRes.data);
+      if (loginResponse.status === 200) {
+        const userRes = await api.get(`/api/user`, {
+          headers: {
+            'X-XSRF-TOKEN': token,
+          },
+        });
+        console.log('Get User:', userRes);
+        setUser(userRes.data);
 
-      Swal.fire('Success!', 'Login succesfully', 'success');
-      navigate('/dashboard');
+        Swal.fire('Success!', 'Login successfully', 'success');
+        navigate('/dashboard');
+      }
     } catch (error) {
-      console.error('Login Error:', error);
+      setLoading(false);
       Swal.fire(
         'Error',
         (error as any).response?.data?.message || 'Invalid email or password',
@@ -84,7 +102,6 @@ const SignIn: React.FC = () => {
                     </span>
                   </div>
                 </div>
-
                 <div className="mb-6">
                   <label className="mb-2.5 block font-medium text-black dark:text-white">
                     Password
@@ -124,8 +141,11 @@ const SignIn: React.FC = () => {
                 <div className="mb-5">
                   <input
                     type="submit"
-                    value="Sign In"
-                    className="w-full cursor-pointer rounded-lg border border-primary bg-primary p-4 text-white transition hover:bg-opacity-90"
+                    value={loading ? 'Sign in account...' : 'Sign in'}
+                    className={`w-full cursor-pointer rounded-lg border border-primary bg-primary p-4 text-white transition hover:bg-opacity-90 ${
+                      loading ? 'opacity-50 cursor-not-allowed' : ''
+                    }`}
+                    disabled={loading}
                   />
                 </div>
 

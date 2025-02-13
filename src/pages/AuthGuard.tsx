@@ -9,7 +9,13 @@ const AuthGuard = ({ children }: { children: ReactNode }) => {
   const location = useLocation();
 
   const loginRoutesList = ['/signin', '/signup'];
-  const privateRouteList = ['/dashboard', /^\/data\/.*/, '/settings'];
+  const privateRouteList = [
+    '/dashboard',
+    /^\/data\/.*/,
+    /^\/transaksi\/.*/,
+    /^\/laporan\/.*/,
+    '/settings',
+  ];
 
   useEffect(() => {
     const isLoginRoute = loginRoutesList.some(
