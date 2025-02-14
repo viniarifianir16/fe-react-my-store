@@ -28,28 +28,32 @@ const SignIn: React.FC = () => {
       const token = await getCsrfToken();
       console.log('Login Response:', token);
 
-      const loginResponse = await api.post(
-        `/login`,
-        { email, password },
-        {
-          headers: {
-            'X-XSRF-TOKEN': token,
+      if (token) {
+        const loginResponse = await api.post(
+          `/login`,
+          { email, password },
+          {
+            headers: {
+              'X-XSRF-TOKEN': token,
+            },
           },
-        },
-      );
-      console.log('Login Response:', loginResponse);
+        );
+        console.log('Login Response:', loginResponse);
 
-      if (loginResponse.status === 204 || loginResponse.status === 200) {
-        const userRes = await api.get(`/api/user`, {
-          headers: {
-            'X-XSRF-TOKEN': token,
-          },
-        });
-        console.log('Get User:', userRes);
-        setUser(userRes.data);
+        if (loginResponse.status === 204 || loginResponse.status === 200) {
+          const userRes = await api.get(`/api/user`, {
+            headers: {
+              'X-XSRF-TOKEN': token,
+            },
+          });
+          console.log('Get User:', userRes);
+          setUser(userRes.data);
 
-        Swal.fire('Success!', 'Login successfully', 'success');
-        navigate('/dashboard');
+          Swal.fire('Success!', 'Login successfully', 'success');
+          navigate('/dashboard');
+        }
+      } else {
+        console.error('CSRF token is not available.');
       }
     } catch (error) {
       setLoading(false);

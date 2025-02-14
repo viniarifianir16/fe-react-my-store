@@ -73,11 +73,16 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   const handleLogout = async () => {
     try {
       const token = await getCsrfToken();
-      await api.post('/logout', {
-        headers: {
-          'X-XSRF-TOKEN': token,
+      console.log(token);
+      await api.post(
+        `/logout`,
+        {},
+        {
+          headers: {
+            'X-XSRF-TOKEN': token,
+          },
         },
-      });
+      );
       logout();
       Swal.fire('Success!', 'Logout Succesfully', 'success');
       navigate('/');
