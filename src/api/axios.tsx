@@ -12,21 +12,27 @@ const api = axios.create({
 
 export const getCsrfToken = async () => {
   try {
-    await api.get(`/sanctum/csrf-cookie`);
-    const csrfToken = document.cookie
-      .split('; ')
-      .find((row) => row.startsWith('XSRF-TOKEN='))
-      ?.split('=')[1];
-
-    if (!csrfToken) {
-      throw new Error('CSRF token not found in cookies.');
-    }
-
-    return decodeURIComponent(csrfToken);
+    const res = await api.get(`/sanctum/csrf-cookie`);
+    console.log('CSRF Cookie Set:', res);
   } catch (error) {
     console.error('Error fetching CSRF cookie:', error);
     return null;
   }
+
+  await new Promise((resolve) => setTimeout(resolve, 100));
+
+  const csrfToken = document.cookie
+    .split('; ')
+    .find((row) => row.startsWith('XSRF-TOKEN='))
+    ?.split('=')[1];
+
+  if (!csrfToken) {
+    throw new Error('CSRF token not found in cookies.');
+  }
+
+  console.log('CSRF Token:', csrfToken);
+
+  return decodeURIComponent(csrfToken);
 };
 
 export default api;
