@@ -12,7 +12,7 @@ import { GrTransaction } from 'react-icons/gr';
 import { AiOutlineDatabase } from 'react-icons/ai';
 import { useAuthStore } from '../../stores/Auth';
 import { useNavigate } from 'react-router-dom';
-import api from '../../api/axios';
+import api, { getCsrfToken } from '../../api/axios';
 import Swal from 'sweetalert2';
 
 interface SidebarProps {
@@ -72,12 +72,17 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 
   const handleLogout = async () => {
     try {
-      await api.post('/logout');
+      const token = await getCsrfToken();
+      await api.post('/logout', {
+        headers: {
+          'X-XSRF-TOKEN': token,
+        },
+      });
       logout();
-      Swal.fire('Success!', 'Logout berhasil', 'success');
+      Swal.fire('Success!', 'Logout Succesfully', 'success');
       navigate('/');
     } catch (error) {
-      Swal.fire('Error', 'Gagal logout', 'error');
+      Swal.fire('Error', 'Logout error', 'error');
     }
   };
 

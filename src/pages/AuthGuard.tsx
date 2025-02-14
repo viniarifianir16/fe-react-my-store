@@ -8,7 +8,7 @@ const AuthGuard = ({ children }: { children: ReactNode }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const loginRoutesList = ['/signin', '/signup'];
+  const loginRoutesList = ['/', '/signin', '/signup'];
   const privateRouteList = [
     '/dashboard',
     /^\/data\/.*/,
