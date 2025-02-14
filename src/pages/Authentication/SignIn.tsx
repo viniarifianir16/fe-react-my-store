@@ -26,6 +26,8 @@ const SignIn: React.FC = () => {
     try {
       setLoading(true);
       const token = await getCsrfToken();
+      console.log('Login Response:', token);
+
       const loginResponse = await api.post(
         `/login`,
         { email, password },
@@ -37,7 +39,7 @@ const SignIn: React.FC = () => {
       );
       console.log('Login Response:', loginResponse);
 
-      if (loginResponse.status === 200) {
+      if (loginResponse.status === 204 || loginResponse.status === 200) {
         const userRes = await api.get(`/api/user`, {
           headers: {
             'X-XSRF-TOKEN': token,

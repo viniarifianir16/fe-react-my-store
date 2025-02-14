@@ -11,12 +11,15 @@ const api = axios.create({
 });
 
 export const getCsrfToken = async () => {
-  await api.get('/sanctum/csrf-cookie');
+  const res = await api.get('/sanctum/csrf-cookie');
+  console.log(res);
 
   const csrfToken = document.cookie
     .split('; ')
     .find((row) => row.startsWith('XSRF-TOKEN='))
     ?.split('=')[1];
+
+  console.log(csrfToken);
 
   if (!csrfToken) {
     console.error('CSRF token not found in cookies.');
