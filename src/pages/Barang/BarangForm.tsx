@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import Swal from 'sweetalert2';
-import api, { getCsrfToken } from '../../api/axios';
+import api from '../../api/axios';
 
 const BarangForm = () => {
   const { id } = useParams<{ id: string }>();
@@ -22,18 +22,7 @@ const BarangForm = () => {
 
   const fetchDataBarang = async (barangID: string) => {
     try {
-      const token = await getCsrfToken();
-      await api.get(`/sanctum/csrf-cookie`, {
-        headers: {
-          'X-XSRF-TOKEN': token,
-        },
-      });
-
-      const response = await api.get(`/api/barang/${barangID}`, {
-        headers: {
-          'X-XSRF-TOKEN': token,
-        },
-      });
+      const response = await api.get(`/api/barang/${barangID}`);
       const barangeData = response.data;
       setKode(barangeData.kode);
       setNama(barangeData.nama);
@@ -52,20 +41,11 @@ const BarangForm = () => {
 
     try {
       setLoading(true);
-      const token = await getCsrfToken();
-      await api.post(
-        `/api/barang`,
-        {
-          kode,
-          nama,
-          harga,
-        },
-        {
-          headers: {
-            'X-XSRF-TOKEN': token,
-          },
-        },
-      );
+      await api.post(`/api/barang`, {
+        kode,
+        nama,
+        harga,
+      });
       Swal.fire('Success!', 'Barang created successfully', 'success');
       navigate('/data/barang');
     } catch (error) {
@@ -83,20 +63,11 @@ const BarangForm = () => {
     e.preventDefault();
     try {
       setLoading(true);
-      const token = await getCsrfToken();
-      await api.put(
-        `/api/barang/${id}`,
-        {
-          kode,
-          nama,
-          harga,
-        },
-        {
-          headers: {
-            'X-XSRF-TOKEN': token,
-          },
-        },
-      );
+      await api.put(`/api/barang/${id}`, {
+        kode,
+        nama,
+        harga,
+      });
       Swal.fire('Success!', 'Barang updated successfully', 'success');
       navigate('/data/barang');
     } catch (error) {

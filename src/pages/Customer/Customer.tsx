@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { IoIosAdd } from 'react-icons/io';
 import Swal from 'sweetalert2';
 import { Link } from 'react-router-dom';
-import api, { getCsrfToken } from '../../api/axios';
+import api from '../../api/axios';
 
 interface Customer {
   id: string | number;
@@ -25,12 +25,7 @@ const Customer = ({ customer }: { customer: Customer[] }) => {
 
   const fetchData = async () => {
     try {
-      const token = await getCsrfToken();
-      const response = await api.get(`/api/customer`, {
-        headers: {
-          'X-XSRF-TOKEN': token,
-        },
-      });
+      const response = await api.get(`/api/customer`);
       setData(response.data);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -50,12 +45,7 @@ const Customer = ({ customer }: { customer: Customer[] }) => {
 
     if (result.isConfirmed) {
       try {
-        const token = await getCsrfToken();
-        await api.delete(`/api/customer/${id}`, {
-          headers: {
-            'X-XSRF-TOKEN': token,
-          },
-        });
+        await api.delete(`/api/customer/${id}`);
         setData(data.filter((item) => item.id !== id));
         Swal.fire('Deleted!', 'Customer has been deleted.', 'success');
       } catch (error) {

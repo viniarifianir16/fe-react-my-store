@@ -1,9 +1,8 @@
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
-import { FaRegEdit, FaRegTrashAlt } from 'react-icons/fa';
+import { FaRegTrashAlt } from 'react-icons/fa';
 import { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
-import { Link } from 'react-router-dom';
-import api, { getCsrfToken } from '../../api/axios';
+import api from '../../api/axios';
 
 interface Sales {
   id: string | number;
@@ -30,12 +29,7 @@ const Laporan = ({ sales }: { sales: Sales[] }) => {
 
   const fetchData = async () => {
     try {
-      const token = await getCsrfToken();
-      const response = await api.get(`/api/sales-report`, {
-        headers: {
-          'X-XSRF-TOKEN': token,
-        },
-      });
+      const response = await api.get(`/api/sales-report`);
       setData(response.data);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -55,14 +49,9 @@ const Laporan = ({ sales }: { sales: Sales[] }) => {
 
     if (result.isConfirmed) {
       try {
-        const token = await getCsrfToken();
-        await api.delete(`/api/sales/${id}`, {
-          headers: {
-            'X-XSRF-TOKEN': token,
-          },
-        });
+        await api.delete(`/api/sales/${id}`);
         setData(data.filter((item) => item.id !== id));
-        Swal.fire('Deleted!', 'Sales has been deleted.', 'success');
+        Swal.fire('Deleted!', 'Laporan has been deleted.', 'success');
       } catch (error) {
         Swal.fire(
           'Error',

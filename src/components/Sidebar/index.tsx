@@ -12,7 +12,7 @@ import { GrTransaction } from 'react-icons/gr';
 import { AiOutlineDatabase } from 'react-icons/ai';
 import { useAuthStore } from '../../stores/Auth';
 import { useNavigate } from 'react-router-dom';
-import api, { getCsrfToken } from '../../api/axios';
+import api from '../../api/axios';
 import Swal from 'sweetalert2';
 
 interface SidebarProps {
@@ -66,30 +66,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
       document.querySelector('body')?.classList.remove('sidebar-expanded');
     }
   }, [sidebarExpanded]);
-
-  const { logout } = useAuthStore();
-  const navigate = useNavigate();
-
-  const handleLogout = async () => {
-    try {
-      const token = await getCsrfToken();
-      console.log(token);
-      await api.post(
-        `/logout`,
-        {},
-        {
-          headers: {
-            'X-XSRF-TOKEN': token,
-          },
-        },
-      );
-      logout();
-      Swal.fire('Success!', 'Logout Succesfully', 'success');
-      navigate('/');
-    } catch (error) {
-      Swal.fire('Error', 'Logout error', 'error');
-    }
-  };
 
   return (
     <aside
@@ -303,7 +279,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               {/* <!-- Menu Item Logout --> */}
               <li>
                 <NavLink
-                  onClick={handleLogout}
+                  // onClick={handleLogout}
                   to="/"
                   className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
                     pathname.includes('logout') && 'bg-graydark dark:bg-meta-4'

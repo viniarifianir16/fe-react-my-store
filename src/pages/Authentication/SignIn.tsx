@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useRef, useState } from 'react';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
-import api, { getCsrfToken } from '../../api/axios';
+// import api, { getCsrfToken } from '../../api/axios';
 import { useAuthStore } from '../../stores/Auth';
 
 const SignIn: React.FC = () => {
@@ -23,46 +23,35 @@ const SignIn: React.FC = () => {
       return;
     }
 
-    try {
-      setLoading(true);
-      const token = await getCsrfToken();
-      console.log('Login Response:', token);
+    // try {
+    //   setLoading(true);
+    //   const token = await getCsrfToken();
 
-      if (token) {
-        const loginResponse = await api.post(
-          `/login`,
-          { email, password },
-          {
-            headers: {
-              'X-XSRF-TOKEN': token,
-            },
-          },
-        );
-        console.log('Login Response:', loginResponse);
+    //   const loginResponse = await api.post(
+    //     `/login`,
+    //     { email, password },
+    //     {
+    //       headers: { 'X-XSRF-TOKEN': token },
+    //     },
+    //   );
+    //   console.log('Login Response:', loginResponse);
 
-        if (loginResponse.status === 204 || loginResponse.status === 200) {
-          const userRes = await api.get(`/api/user`, {
-            headers: {
-              'X-XSRF-TOKEN': token,
-            },
-          });
-          console.log('Get User:', userRes);
-          setUser(userRes.data);
+    //   if (loginResponse.status === 200) {
+    //     const userRes = await api.get(`/api/user`);
+    //     console.log('Get User:', userRes);
+    //     setUser(userRes.data);
 
-          Swal.fire('Success!', 'Login successfully', 'success');
-          navigate('/dashboard');
-        }
-      } else {
-        console.error('CSRF token is not available.');
-      }
-    } catch (error) {
-      setLoading(false);
-      Swal.fire(
-        'Error',
-        (error as any).response?.data?.message || 'Invalid email or password',
-        'error',
-      );
-    }
+    //     Swal.fire('Success!', 'Login successfully', 'success');
+    //     navigate('/dashboard');
+    //   }
+    // } catch (error) {
+    //   setLoading(false);
+    //   Swal.fire(
+    //     'Error',
+    //     (error as any).response?.data?.message || 'Invalid email or password',
+    //     'error',
+    //   );
+    // }
   };
 
   return (

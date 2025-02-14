@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import Swal from 'sweetalert2';
-import api, { getCsrfToken } from '../../api/axios';
+import api from '../../api/axios';
 
 const CustomerForm = () => {
   const { id } = useParams<{ id: string }>();
@@ -22,18 +22,7 @@ const CustomerForm = () => {
 
   const fetchDataCustomer = async (customerID: string) => {
     try {
-      const token = await getCsrfToken();
-      await api.get(`/sanctum/csrf-cookie`, {
-        headers: {
-          'X-XSRF-TOKEN': token,
-        },
-      });
-
-      const response = await api.get(`/api/customer/${customerID}`, {
-        headers: {
-          'X-XSRF-TOKEN': token,
-        },
-      });
+      const response = await api.get(`/api/customer/${customerID}`);
       const customereData = response.data;
       setKode(customereData.kode);
       setNama(customereData.name);
@@ -53,20 +42,11 @@ const CustomerForm = () => {
 
     try {
       setLoading(true);
-      const token = await getCsrfToken();
-      await api.post(
-        `/api/customer`,
-        {
-          kode,
-          name,
-          telp,
-        },
-        {
-          headers: {
-            'X-XSRF-TOKEN': token,
-          },
-        },
-      );
+      await api.post(`/api/customer`, {
+        kode,
+        name,
+        telp,
+      });
       Swal.fire('Success!', 'Customer created successfully', 'success');
       navigate('/data/customer');
     } catch (error) {
@@ -84,20 +64,11 @@ const CustomerForm = () => {
     e.preventDefault();
     try {
       setLoading(true);
-      const token = await getCsrfToken();
-      await api.put(
-        `/api/customer/${id}`,
-        {
-          kode,
-          name,
-          telp,
-        },
-        {
-          headers: {
-            'X-XSRF-TOKEN': token,
-          },
-        },
-      );
+      await api.put(`/api/customer/${id}`, {
+        kode,
+        name,
+        telp,
+      });
       Swal.fire('Success!', 'Customer updated successfully', 'success');
       navigate('/data/customer');
     } catch (error) {

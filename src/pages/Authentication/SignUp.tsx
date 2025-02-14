@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useRef, useState } from 'react';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
-import api, { getCsrfToken } from '../../api/axios';
+import api from '../../api/axios';
 
 const SignUp: React.FC = () => {
   const nameRef = useRef<HTMLInputElement>(null);
@@ -22,21 +22,13 @@ const SignUp: React.FC = () => {
 
     try {
       setLoading(true);
-      const token = await getCsrfToken();
-      await api.post(
-        `/register`,
-        {
-          name,
-          email,
-          password,
-          password_confirmation,
-        },
-        {
-          headers: {
-            'X-XSRF-TOKEN': token,
-          },
-        },
-      );
+      await api.get('/sanctum/csrf-cookie');
+      await api.post(`/register`, {
+        name,
+        email,
+        password,
+        password_confirmation,
+      });
 
       Swal.fire(
         'Success!',

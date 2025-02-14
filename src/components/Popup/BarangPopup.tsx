@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import api, { getCsrfToken } from '../../api/axios';
+import api from '../../api/axios';
 
 interface Barang {
   id: number;
@@ -22,12 +22,7 @@ const BarangPopup: React.FC<BarangPopupProps> = ({ onSelect, onClose }) => {
 
   const fetchData = async () => {
     try {
-      const token = await getCsrfToken();
-      const response = await api.get(`/api/barang`, {
-        headers: {
-          'X-XSRF-TOKEN': token,
-        },
-      });
+      const response = await api.get(`/api/barang`);
       setData(response.data);
     } catch (error) {
       console.error('Error fetching data:', error);

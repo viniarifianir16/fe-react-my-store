@@ -3,7 +3,7 @@ import { FaRegTrashAlt } from 'react-icons/fa';
 import { useState, useEffect, Key } from 'react';
 import { IoIosAdd } from 'react-icons/io';
 import Swal from 'sweetalert2';
-import api, { getCsrfToken } from '../../api/axios';
+import api from '../../api/axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import CustomerPopup from '../../components/Popup/CustomerPopup';
 import BarangPopup from '../../components/Popup/BarangPopup';
@@ -56,12 +56,7 @@ const Transaksi = ({ transaksi }: { transaksi: BarangList[] }) => {
 
   const fetchData = async () => {
     try {
-      const token = await getCsrfToken();
-      const response = await api.get(`/api/barang`, {
-        headers: {
-          'X-XSRF-TOKEN': token,
-        },
-      });
+      const response = await api.get(`/api/barang`);
       setData(response.data);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -137,12 +132,7 @@ const Transaksi = ({ transaksi }: { transaksi: BarangList[] }) => {
 
   const fetchDataLastSalesID = async () => {
     try {
-      const token = await getCsrfToken();
-      const response = await api.get(`/api/sales/last-sales-id`, {
-        headers: {
-          'X-XSRF-TOKEN': token,
-        },
-      });
+      const response = await api.get(`/api/sales/last-sales-id`);
       return response.data.lastSalesID;
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -154,16 +144,15 @@ const Transaksi = ({ transaksi }: { transaksi: BarangList[] }) => {
 
     try {
       setLoading(true);
-      const token = await getCsrfToken();
       const lastId = await fetchDataLastSalesID();
-      const newId = lastId + Number(1); // Menambahkan 1 untuk auto-increment
+      const newId = lastId + Number(1);
 
       const date = new Date();
-      const yearMonth = date.toISOString().slice(0, 7).replace('-', ''); // Format: YYYYMM
-      const formattedNewId = String(newId).padStart(4, '0'); // Menambahkan nol di depan jika perlu
+      const yearMonth = date.toISOString().slice(0, 7).replace('-', '');
+      const formattedNewId = String(newId).padStart(4, '0');
 
       const salesKode = {
-        kode: `${yearMonth}-${formattedNewId}`, // Format kode yang diinginkan
+        kode: `${yearMonth}-${formattedNewId}`,
       };
 
       if (!barangList.length) {
@@ -181,13 +170,9 @@ const Transaksi = ({ transaksi }: { transaksi: BarangList[] }) => {
         total_bayar: total_bayar,
       };
 
-      const salesResponse = await api.post('/api/sales', salesData, {
-        headers: {
-          'X-XSRF-TOKEN': token,
-        },
-      });
+      const salesResponse = await api.post('/api/sales', salesData);
 
-      const sales_id = salesResponse.data.id; // Pastikan mengambil ID dengan benar
+      const sales_id = salesResponse.data.id;
       if (!sales_id) {
         console.error(
           'Gagal mendapatkan sales_id dari response:',
@@ -196,7 +181,6 @@ const Transaksi = ({ transaksi }: { transaksi: BarangList[] }) => {
         throw new Error('Gagal menyimpan transaksi, sales_id tidak ditemukan.');
       }
 
-      // 3. Menyiapkan data untuk tabel "sales_det"
       const salesDetails = barangList.map((barang) => ({
         sales_id: sales_id,
         barang_id: barang.id,
@@ -209,11 +193,7 @@ const Transaksi = ({ transaksi }: { transaksi: BarangList[] }) => {
       }));
 
       for (const detail of salesDetails) {
-        await api.post('/api/sales-det', detail, {
-          headers: {
-            'X-XSRF-TOKEN': token,
-          },
-        });
+        await api.post('/api/sales-det', detail);
       }
       setBarangList([]);
       setSelectedCustomer(null);
@@ -223,7 +203,7 @@ const Transaksi = ({ transaksi }: { transaksi: BarangList[] }) => {
       setKodeCustomer('');
       setNama('');
       setTelp('');
-      Swal.fire('Success!', 'Barang created successfully', 'success');
+      Swal.fire('Success!', 'Transaksi created successfully', 'success');
       navigate('/laporan');
     } catch (error) {
       setLoading(false);
@@ -240,20 +220,11 @@ const Transaksi = ({ transaksi }: { transaksi: BarangList[] }) => {
     e.preventDefault();
     try {
       setLoading(true);
-      const token = await getCsrfToken();
-      await api.put(
-        `/api/barang/${id}`,
-        {
-          kode_transaksi,
-          nama,
-        },
-        {
-          headers: {
-            'X-XSRF-TOKEN': token,
-          },
-        },
-      );
-      Swal.fire('Success!', 'Barang updated successfully', 'success');
+      await api.put(`/api/barang/${id}`, {
+        kode_transaksi,
+        nama,
+      });
+      Swal.fire('Success!', 'Transaksi updated successfully', 'success');
       navigate('/data/barang');
     } catch (error) {
       setLoading(false);

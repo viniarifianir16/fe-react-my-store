@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { IoIosAdd } from 'react-icons/io';
 import Swal from 'sweetalert2';
 import { Link } from 'react-router-dom';
-import api, { getCsrfToken } from '../../api/axios';
+import api from '../../api/axios';
 
 interface Barang {
   id: string | number;
@@ -25,12 +25,7 @@ const Barang = ({ barang }: { barang: Barang[] }) => {
 
   const fetchData = async () => {
     try {
-      const token = await getCsrfToken();
-      const response = await api.get(`/api/barang`, {
-        headers: {
-          'X-XSRF-TOKEN': token,
-        },
-      });
+      const response = await api.get(`/api/barang`);
       setData(response.data);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -50,12 +45,7 @@ const Barang = ({ barang }: { barang: Barang[] }) => {
 
     if (result.isConfirmed) {
       try {
-        const token = await getCsrfToken();
-        await api.delete(`/api/barang/${id}`, {
-          headers: {
-            'X-XSRF-TOKEN': token,
-          },
-        });
+        await api.delete(`/api/barang/${id}`);
         setData(data.filter((item) => item.id !== id));
         Swal.fire('Deleted!', 'Barang has been deleted.', 'success');
       } catch (error) {

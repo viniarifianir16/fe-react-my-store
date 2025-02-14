@@ -7,7 +7,7 @@ const DefaultLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
 
-  const isWelcomePage = location.pathname === '/';
+  const isWelcomePage = location.pathname === '';
   const isSignInPage = location.pathname === '/signin';
   const isSignUpPage = location.pathname === '/signup';
   const hiddenPage = isWelcomePage || isSignInPage || isSignUpPage;
