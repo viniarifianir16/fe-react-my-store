@@ -13,4 +13,5 @@
 ![Transaksi-My-Store-02-14-2025_11_23_AM 2](https://github.com/user-attachments/assets/64a00f38-58aa-4e3d-a828-93078aa4901e)
 ![Transaksi-My-Store-02-14-2025_11_24_AM 3](https://github.com/user-attachments/assets/3f532275-3f24-4178-ac63-05939b9bc122)
 
-
+# Laporan Page
+![Laporan-My-Store-02-14-2025_11_24_AM](https://github.com/user-attachments/assets/46944113-6332-4793-9a77-5c8d780a08f9)
